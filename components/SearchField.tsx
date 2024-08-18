@@ -2,22 +2,12 @@
 
 import { useEffect } from "react";
 import FilterBox from "./FilterBox";
-import { atom, useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import filterSchema from "@/common/schemas/filter";
-import type { Filter } from "@/common/types/Filter";
-
-type SearchType = {
-  search: string;
-  filters: Filter[];
-};
-
-const searchAtom = atom<SearchType>({
-  search: "",
-  filters: [],
-});
+import { filterAtom } from "@/atoms/search";
 
 export default function SearchField() {
-  const [search, setSearch] = useAtom(searchAtom);
+  const [filter, setFilter] = useAtom(filterAtom);
 
   useEffect(() => {
     async function fetchData() {
@@ -30,7 +20,7 @@ export default function SearchField() {
         process.env.NEXT_PUBLIC_API_URL + "/api/parts/filters"
       );
       let queryParams = new URLSearchParams();
-      if (search.search !== "") queryParams.append("search", search.search);
+      if (filter.search !== "") queryParams.append("search", filter.search);
 
       const response = await fetch(url);
       const data = await response.json();
@@ -41,29 +31,24 @@ export default function SearchField() {
         return;
       }
 
-      console.log(result.data);
-
-      const filters: Filter[] = Object.entries(result.data).map(
-        ([name, values]) => ({
-          name,
-          values,
-        })
-      );
-
-      console.log(filters);
-
-      setSearch({ ...search, filters });
+      setFilter({
+        ...filter,
+        filters: result.data,
+      });
     }
 
     fetchData();
-  }, [search.search]);
+  }, [filter.search]);
 
   return (
     <div>
       <div className="flex overflow-x-auto p-5 gap-5">
-        {search.filters.map((filter) => (
-          <FilterBox key={filter.name} filter={filter} />
-        ))}
+        {Object.entries(filter.filters).map(([key, value]) => {
+          if (!(value.length === 1 && value[0] === null))
+            return (
+              <FilterBox key={key} filter={{ name: key, values: value }} />
+            );
+        })}
       </div>
     </div>
   );

@@ -1,25 +1,76 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "./ui/separator";
+import filterCategories from "@/common/constants/filterCategories";
 import type { Filter } from "@/common/types/Filter";
+import { useAtom } from "jotai";
+import { filterAtom } from "@/atoms/search";
+import { useMemo } from "react";
 
-function FilterItem({ value }: { value: string }) {
+function FilterItem({ name, value }: { name: string; value: string }) {
+  const [filter, setFilter] = useAtom(filterAtom);
+
+  const selectedFilters = filter.selectedFilters[name];
+
+  const isSelected = useMemo(() => {
+    return selectedFilters?.includes(value);
+  }, [selectedFilters]);
+
+  function handleClick() {
+    if (isSelected) {
+      setFilter((prev) => {
+        const selectedFilters = prev.selectedFilters[name].filter(
+          (filter) => filter !== value
+        );
+
+        const updatedFilters = {
+          ...prev.selectedFilters,
+          [name]: selectedFilters,
+        };
+
+        if (selectedFilters.length === 0) {
+          delete updatedFilters[name];
+        }
+
+        return {
+          ...prev,
+          selectedFilters: updatedFilters,
+        };
+      });
+    } else {
+      setFilter((prev) => {
+        const selectedFilters = prev.selectedFilters[name] || [];
+        return {
+          ...prev,
+          selectedFilters: {
+            ...prev.selectedFilters,
+            [name]: [...selectedFilters, value],
+          },
+        };
+      });
+    }
+  }
+
   return (
-    <div>
-      <button>{value}</button>
-    </div>
+    <button
+      className={`w-full p-2 text-sm text-center border-t-2 border-b-2 border-secondary ${
+        isSelected ? "bg-blue-500 text-white" : "bg-gray-200"
+      }`}
+      onClick={handleClick}
+    >
+      {value}
+    </button>
   );
 }
 
 export default function FilterBox({ filter }: { filter: Filter }) {
   return (
     <Card className="flex-none w-64 ">
-      <CardHeader className="text-center">
-        <CardTitle>{filter.name}</CardTitle>
+      <CardHeader className="text-center p-3">
+        <CardTitle>{filterCategories[filter.name]}</CardTitle>
       </CardHeader>
-      <Separator />
       <CardContent className="text-center p-0 overflow-y-auto h-48">
         {filter.values.map((value, index) => {
-          if (value) return <FilterItem key={index} value={value} />;
+          if (value)
+            return <FilterItem key={index} name={filter.name} value={value} />;
         })}
       </CardContent>
     </Card>

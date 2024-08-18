@@ -21,6 +21,8 @@ import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import responseSchema from "@/common/schemas/response";
 import partSchema from "@/common/schemas/part";
+import { useAtomValue } from "jotai";
+import { filterAtom } from "@/atoms/search";
 
 export default function PartTable() {
   const [data, setData] = useState<z.infer<typeof partSchema>[]>([]);
@@ -30,6 +32,7 @@ export default function PartTable() {
     nextPage: number | boolean;
     prevPage: number | boolean;
   }>({ nextPage: false, prevPage: false });
+  const filter = useAtomValue(filterAtom);
 
   const page = useMemo(
     () => pagination.offset / pagination.limit + 1,
@@ -53,7 +56,9 @@ export default function PartTable() {
         return;
       }
 
-      const url = new URL(process.env.NEXT_PUBLIC_API_URL + "/api/parts");
+      const url = new URL(
+        process.env.NEXT_PUBLIC_API_URL + "/api/parts/search"
+      );
       let queryParams = new URLSearchParams();
       if (pagination.limit !== 10)
         queryParams.append("limit", pagination.limit.toString());
@@ -61,7 +66,21 @@ export default function PartTable() {
         queryParams.append("offset", pagination.offset.toString());
       url.search = queryParams.toString();
 
-      const response = await fetch(url);
+      const searchBody = {
+        search: filter.search === "" ? undefined : filter.search,
+        filters:
+          Object.keys(filter.selectedFilters).length > 0
+            ? filter.selectedFilters
+            : undefined,
+      };
+
+      const response = await fetch(url, {
+        method: "POST",
+        body: JSON.stringify(searchBody),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       const data = await response.json();
       const result = responseSchema.safeParse(data);
 
@@ -79,7 +98,7 @@ export default function PartTable() {
     }
 
     fetchData();
-  }, [pagination]);
+  }, [pagination, filter.selectedFilters, filter.search]);
 
   if (pending) {
     return <div>Loading...</div>;
