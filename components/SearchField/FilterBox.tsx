@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import filterCategories from "@/common/constants/filterCategories";
-import type { Filter } from "@/common/types/Filter";
+import filterCategories from "@/lib/constants/filterCategories";
+import type { Filter } from "@/lib/types/Filter";
 import { useAtom } from "jotai";
 import { filterAtom } from "@/atoms/search";
 import { useMemo } from "react";
@@ -51,8 +51,8 @@ function FilterItem({ name, value }: { name: string; value: string }) {
 
   return (
     <button
-      className={`w-full p-2 text-sm text-center border-t-2 border-b-2 border-secondary ${
-        isSelected ? "bg-blue-500 text-white" : "bg-gray-200"
+      className={`w-full p-2 text-sm text-center ${
+        isSelected ? "bg-blue-500 text-white" : "bg-gray-100"
       }`}
       onClick={handleClick}
     >
@@ -67,7 +67,7 @@ export default function FilterBox({ filter }: { filter: Filter }) {
       <CardHeader className="text-center p-3">
         <CardTitle>{filterCategories[filter.name]}</CardTitle>
       </CardHeader>
-      <CardContent className="text-center p-0 overflow-y-auto h-48">
+      <CardContent className="text-center p-0 overflow-y-auto h-48 flex flex-col gap-1">
         {filter.values.map((value, index) => {
           if (value)
             return <FilterItem key={index} name={filter.name} value={value} />;

@@ -1,5 +1,5 @@
 const filterCategories: Record<string, string> = {
-  materialType: "Malzeme Türü",
+  materialType: "Malzeme Tipi",
   channel: "Kanal",
   caseType: "Kılıf Tipi",
   voltage: "Voltaj",

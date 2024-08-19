@@ -19,8 +19,8 @@ import {
 
 import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
-import responseSchema from "@/common/schemas/response";
-import partSchema from "@/common/schemas/part";
+import responseSchema from "@/lib/schemas/response";
+import partSchema from "@/lib/schemas/part";
 import { useAtomValue } from "jotai";
 import { filterAtom } from "@/atoms/search";
 
@@ -92,7 +92,6 @@ export default function PartTable() {
         nextPage: result.data.nextPage,
         prevPage: result.data.prevPage,
       });
-      console.log(result.data.data);
       setData(result.data.data);
       setPending(false);
     }
