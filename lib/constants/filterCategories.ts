@@ -1,4 +1,4 @@
-const filterCategories: Record<string, string> = {
+const FILTER_CATEGORIES: Record<string, string> = {
   materialType: "Malzeme Tipi",
   channel: "Kanal",
   caseType: "Kılıf Tipi",
@@ -9,4 +9,4 @@ const filterCategories: Record<string, string> = {
   power: "Güç",
 };
 
-export default filterCategories;
+export default FILTER_CATEGORIES;

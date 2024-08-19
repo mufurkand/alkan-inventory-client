@@ -40,11 +40,11 @@ export default function SearchField() {
     }
 
     fetchData();
-  }, [filter.search]);
+  }, [filter.search, filter.renderController]);
 
   return (
     <div>
-      <div className="flex overflow-x-auto p-5 gap-5">
+      <div className="flex overflow-x-auto p-5 gap-5 pb-2">
         {Object.entries(filter.filters).map(([key, value]) => {
           if (!(value.length === 1 && value[0] === null) && value.length !== 0)
             return (

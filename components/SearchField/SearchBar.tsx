@@ -16,7 +16,7 @@ export default function SearchBar() {
   }
 
   return (
-    <div className="p-5 flex gap-5 pt-0">
+    <div className="p-5 flex gap-5 pt-3">
       <Input
         onKeyDown={(event) => {
           if (event.key === "Enter") handleSearchSubmit();
