@@ -72,10 +72,12 @@ export default function PartForm({
   part,
   mode,
   setIsOpen,
+  setIsBrokenImage,
 }: {
   part?: z.infer<typeof partSchema>;
   mode: "POST" | "PATCH";
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsBrokenImage?: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -152,6 +154,9 @@ export default function PartForm({
       ...filter,
       renderController: filter.renderController + 1,
     });
+
+    if (setIsBrokenImage && values.image.length > 0)
+      setTimeout(() => setIsBrokenImage(false), 1000);
   }
 
   return (

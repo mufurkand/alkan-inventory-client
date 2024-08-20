@@ -45,10 +45,13 @@ import partSchema from "@/lib/schemas/part";
 import { useAtomValue, useAtom } from "jotai";
 import { filterAtom } from "@/atoms/search";
 import PartForm from "./PartForm";
+import Image from "next/image";
+import Link from "next/link";
 
 function Row({ part }: { part: z.infer<typeof partSchema> }) {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false);
+  const [isBrokenImage, setIsBrokenImage] = useState(false);
   const [filter, setFilter] = useAtom(filterAtom);
 
   async function handleDelete() {
@@ -96,8 +99,31 @@ function Row({ part }: { part: z.infer<typeof partSchema> }) {
     });
   }
 
+  function handleBrokenImage() {
+    setIsBrokenImage(true);
+  }
+
   return (
     <TableRow key={part.id}>
+      <TableCell>
+        {isBrokenImage ? (
+          "-"
+        ) : (
+          <Link
+            target="_blank"
+            href={process.env.NEXT_PUBLIC_API_URL + "/" + part.imagePath}
+          >
+            <Image
+              unoptimized
+              height={64}
+              width={64}
+              onError={handleBrokenImage}
+              alt={"Part with number " + part.partNumber}
+              src={process.env.NEXT_PUBLIC_API_URL + "/" + part.imagePath}
+            />
+          </Link>
+        )}
+      </TableCell>
       <TableCell>{part.materialType}</TableCell>
       <TableCell>{part.partNumber}</TableCell>
       <TableCell>{part.location}</TableCell>
@@ -123,7 +149,12 @@ function Row({ part }: { part: z.infer<typeof partSchema> }) {
                 Parçanın herhangi bir bilgisini buradan güncelleyebilirsiniz.
               </SheetDescription>
             </SheetHeader>
-            <PartForm part={part} mode="PATCH" setIsOpen={setIsSheetOpen} />
+            <PartForm
+              part={part}
+              mode="PATCH"
+              setIsOpen={setIsSheetOpen}
+              setIsBrokenImage={setIsBrokenImage}
+            />
           </SheetContent>
         </Sheet>
       </TableCell>
@@ -262,6 +293,7 @@ export default function PartTable() {
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead>Resim</TableHead>
             <TableHead>Malzeme Tipi</TableHead>
             <TableHead>Parça Numarası</TableHead>
             <TableHead>Yer</TableHead>
