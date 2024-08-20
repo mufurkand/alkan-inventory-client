@@ -52,7 +52,7 @@ function FilterItem({ name, value }: { name: string; value: string }) {
   return (
     <button
       className={`w-full p-2 text-sm text-center ${
-        isSelected ? "bg-blue-500 text-white" : "bg-gray-100"
+        isSelected ? "bg-blue-500 text-white" : "bg-gray-100 dark:bg-gray-800"
       }`}
       onClick={handleClick}
     >

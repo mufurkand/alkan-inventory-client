@@ -118,7 +118,7 @@ function Row({ part }: { part: z.infer<typeof partSchema> }) {
           </SheetTrigger>
           <SheetContent className="overflow-y-auto">
             <SheetHeader className="mb-5">
-              <SheetTitle>Parça Güncelle</SheetTitle>
+              <SheetTitle>Parça Kaydı Güncelle</SheetTitle>
               <SheetDescription>
                 Parçanın herhangi bir bilgisini buradan güncelleyebilirsiniz.
               </SheetDescription>
@@ -139,8 +139,8 @@ function Row({ part }: { part: z.infer<typeof partSchema> }) {
             <AlertDialogHeader>
               <AlertDialogTitle>Emin misiniz?</AlertDialogTitle>
               <AlertDialogDescription>
-                Bu işlem geri alınamaz. Parça sunucularımızdan kalıcı olarak
-                silinecektir.
+                Bu işlem geri alınamaz. Parça kaydı sunucularımızdan kalıcı
+                olarak silinecektir.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
