@@ -71,11 +71,11 @@ const formSchema = z.object({
 export default function PartForm({
   part,
   mode,
-  setIsSheetOpen,
+  setIsOpen,
 }: {
   part?: z.infer<typeof partSchema>;
   mode: "POST" | "PATCH";
-  setIsSheetOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -98,7 +98,7 @@ export default function PartForm({
   const [filter, setFilter] = useAtom(filterAtom);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsSheetOpen(false);
+    setIsOpen(false);
 
     const formData = new FormData();
     const formDataEntries = {
@@ -128,19 +128,25 @@ export default function PartForm({
     let data: unknown;
 
     if (mode === "POST") {
-      return;
+      response = await fetch(process.env.NEXT_PUBLIC_API_URL + "/api/parts", {
+        method: mode,
+        body: formData,
+      });
+      data = await response.json();
+    } else {
+      if (!part) return;
+
+      response = await fetch(
+        process.env.NEXT_PUBLIC_API_URL + `/api/parts/${part.id}`,
+        {
+          method: mode,
+          body: formData,
+        }
+      );
+      data = await response.json();
     }
 
-    if (!part) return;
-
-    response = await fetch(
-      process.env.NEXT_PUBLIC_API_URL + `/api/parts/${part.id}`,
-      {
-        method: "PATCH",
-        body: formData,
-      }
-    );
-    data = await response.json();
+    console.log(data);
 
     setFilter({
       ...filter,

@@ -63,7 +63,8 @@ function FilterItem({ name, value }: { name: string; value: string }) {
 
 export default function FilterBox({ filter }: { filter: Filter }) {
   return (
-    <Card className="flex-none w-64 ">
+    // take a look at the SearchField component for mr-5 explanation
+    <Card className="flex-none w-64 mr-5">
       <CardHeader className="text-center p-3">
         <CardTitle>{filterCategories[filter.name]}</CardTitle>
       </CardHeader>

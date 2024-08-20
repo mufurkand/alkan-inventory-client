@@ -16,7 +16,8 @@ export default function SearchBar() {
   }
 
   return (
-    <div className="p-5 flex gap-5 pt-3">
+    // take a look at the SearchField component for pr-5 padding explanation
+    <div className="flex gap-5 pr-5 flex-grow">
       <Input
         onKeyDown={(event) => {
           if (event.key === "Enter") handleSearchSubmit();

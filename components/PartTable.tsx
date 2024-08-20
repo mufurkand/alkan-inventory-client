@@ -123,11 +123,7 @@ function Row({ part }: { part: z.infer<typeof partSchema> }) {
                 Parçanın herhangi bir bilgisini buradan güncelleyebilirsiniz.
               </SheetDescription>
             </SheetHeader>
-            <PartForm
-              part={part}
-              mode="PATCH"
-              setIsSheetOpen={setIsSheetOpen}
-            />
+            <PartForm part={part} mode="PATCH" setIsOpen={setIsSheetOpen} />
           </SheetContent>
         </Sheet>
       </TableCell>

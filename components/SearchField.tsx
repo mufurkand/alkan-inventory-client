@@ -6,6 +6,7 @@ import { useAtom, useAtomValue } from "jotai";
 import filterSchema from "@/lib/schemas/filter";
 import { filterAtom } from "@/atoms/search";
 import SearchBar from "./SearchField/SearchBar";
+import ButtonSet from "./SearchField/ButtonSet";
 
 export default function SearchField() {
   const [filter, setFilter] = useAtom(filterAtom);
@@ -43,16 +44,29 @@ export default function SearchField() {
   }, [filter.search, filter.renderController]);
 
   return (
-    <div>
-      <div className="flex overflow-x-auto p-5 gap-5 pb-2">
-        {Object.entries(filter.filters).map(([key, value]) => {
-          if (!(value.length === 1 && value[0] === null) && value.length !== 0)
-            return (
-              <FilterBox key={key} filter={{ name: key, values: value }} />
-            );
-        })}
+    <div className="pt-5 pb-5 grid gap-5">
+      <div className="flex overflow-x-auto">
+        {/*
+          This spaghetti margin values instead of a proper gap and padding allows us to intersect
+          FilterBoxes with the screen edge when overflow happens, and act like natural padding when
+          it doesn't.
+        */}
+        <div className="flex ml-5">
+          {Object.entries(filter.filters).map(([key, value]) => {
+            if (
+              !(value.length === 1 && value[0] === null) &&
+              value.length !== 0
+            )
+              return (
+                <FilterBox key={key} filter={{ name: key, values: value }} />
+              );
+          })}
+        </div>
       </div>
-      <SearchBar />
+      <div className="flex md:flex-row flex-col gap-5 pl-5">
+        <ButtonSet />
+        <SearchBar />
+      </div>
     </div>
   );
 }
