@@ -71,11 +71,11 @@ const formSchema = z.object({
 export default function PartForm({
   part,
   mode,
-  setIsOpen,
+  setIsSheetOpen,
 }: {
   part?: z.infer<typeof partSchema>;
   mode: "POST" | "PATCH";
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsSheetOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -98,7 +98,7 @@ export default function PartForm({
   const [filter, setFilter] = useAtom(filterAtom);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsOpen(false);
+    setIsSheetOpen(false);
 
     const formData = new FormData();
     const formDataEntries = {
@@ -141,7 +141,6 @@ export default function PartForm({
       }
     );
     data = await response.json();
-    console.log(data);
 
     setFilter({
       ...filter,

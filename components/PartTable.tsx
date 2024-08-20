@@ -24,18 +24,77 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
 import { SquarePen, Trash2 } from "lucide-react";
 
 import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import responseSchema from "@/lib/schemas/response";
 import partSchema from "@/lib/schemas/part";
-import { useAtomValue } from "jotai";
+import { useAtomValue, useAtom } from "jotai";
 import { filterAtom } from "@/atoms/search";
 import PartForm from "./PartForm";
 
 function Row({ part }: { part: z.infer<typeof partSchema> }) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false);
+  const [filter, setFilter] = useAtom(filterAtom);
+
+  async function handleDelete() {
+    if (!process.env.NEXT_PUBLIC_API_URL) {
+      console.error("API URL is not defined.");
+      return;
+    }
+
+    const url = new URL(
+      process.env.NEXT_PUBLIC_API_URL + "/api/parts/" + part.id
+    );
+
+    const response = await fetch(url, {
+      method: "DELETE",
+    });
+    const data = await response.json();
+    const result = partSchema.safeParse(data);
+
+    if (!result.success) {
+      console.error(result.error);
+      console.error(result);
+      return;
+    }
+
+    let selectedFilters = filter.selectedFilters;
+
+    Object.entries(part).forEach(([key, value]) => {
+      if (selectedFilters[key] === undefined) return;
+
+      if (typeof value === "string" && selectedFilters[key].includes(value))
+        selectedFilters[key] = selectedFilters[key].filter(
+          (filter) => filter !== value
+        );
+
+      if (selectedFilters[key].length === 0) {
+        delete selectedFilters[key];
+      }
+    });
+
+    setIsAlertDialogOpen(false);
+    setFilter({
+      ...filter,
+      selectedFilters,
+      renderController: filter.renderController - 1,
+    });
+  }
 
   return (
     <TableRow key={part.id}>
@@ -53,7 +112,7 @@ function Row({ part }: { part: z.infer<typeof partSchema> }) {
       <TableCell>{part.power || "-"}</TableCell>
       <TableCell>{part.description || "-"}</TableCell>
       <TableCell className="text-center">
-        <Sheet open={isOpen} onOpenChange={setIsOpen}>
+        <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
           <SheetTrigger>
             <SquarePen />
           </SheetTrigger>
@@ -64,14 +123,38 @@ function Row({ part }: { part: z.infer<typeof partSchema> }) {
                 Parçanın herhangi bir bilgisini buradan güncelleyebilirsiniz.
               </SheetDescription>
             </SheetHeader>
-            <PartForm part={part} mode="PATCH" setIsOpen={setIsOpen} />
+            <PartForm
+              part={part}
+              mode="PATCH"
+              setIsSheetOpen={setIsSheetOpen}
+            />
           </SheetContent>
         </Sheet>
       </TableCell>
       <TableCell className="text-center">
-        <button>
-          <Trash2 />
-        </button>
+        <AlertDialog
+          open={isAlertDialogOpen}
+          onOpenChange={setIsAlertDialogOpen}
+        >
+          <AlertDialogTrigger>
+            <Trash2 />
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Emin misiniz?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Bu işlem geri alınamaz. Parça sunucularımızdan kalıcı olarak
+                silinecektir.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>İptal</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDelete}>
+                Devam
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </TableCell>
     </TableRow>
   );
@@ -104,7 +187,7 @@ export default function PartTable() {
 
   useEffect(() => {
     async function fetchData() {
-      console.log("fetch triggered");
+      console.warn("fetch triggered");
       if (!process.env.NEXT_PUBLIC_API_URL) {
         console.error("API URL is not defined.");
         return;
