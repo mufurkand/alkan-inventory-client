@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { LoaderCircle } from "lucide-react";
 import { SquarePen, Trash2 } from "lucide-react";
+import { ImageOff } from "lucide-react";
 
 import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
@@ -105,22 +106,26 @@ function Row({ part }: { part: z.infer<typeof partSchema> }) {
 
   return (
     <TableRow key={part.id}>
-      <TableCell>
+      <TableCell className="flex justify-center items-center">
         {isBrokenImage ? (
-          "-"
+          <div className="h-16 w-16 flex justify-center items-center">
+            <ImageOff />
+          </div>
         ) : (
           <Link
             target="_blank"
             href={process.env.NEXT_PUBLIC_API_URL + "/" + part.imagePath}
           >
-            <Image
-              unoptimized
-              height={64}
-              width={64}
-              onError={handleBrokenImage}
-              alt={"Part with number " + part.partNumber}
-              src={process.env.NEXT_PUBLIC_API_URL + "/" + part.imagePath}
-            />
+            <div className="h-16 w-16 flex justify-center items-center">
+              <Image
+                unoptimized
+                height={64}
+                width={64}
+                onError={handleBrokenImage}
+                alt={"Part with number " + part.partNumber}
+                src={process.env.NEXT_PUBLIC_API_URL + "/" + part.imagePath}
+              />
+            </div>
           </Link>
         )}
       </TableCell>
@@ -137,7 +142,7 @@ function Row({ part }: { part: z.infer<typeof partSchema> }) {
       <TableCell>{part.unit || "-"}</TableCell>
       <TableCell>{part.power || "-"}</TableCell>
       <TableCell>{part.description || "-"}</TableCell>
-      <TableCell className="text-center">
+      <TableCell>
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
           <SheetTrigger>
             <SquarePen />
@@ -158,7 +163,7 @@ function Row({ part }: { part: z.infer<typeof partSchema> }) {
           </SheetContent>
         </Sheet>
       </TableCell>
-      <TableCell className="text-center">
+      <TableCell>
         <AlertDialog
           open={isAlertDialogOpen}
           onOpenChange={setIsAlertDialogOpen}
@@ -295,25 +300,26 @@ export default function PartTable() {
 
   return (
     <div className="flex flex-col">
-      <Table>
+      <Table className="text-center">
         <TableHeader>
           <TableRow>
-            <TableHead>Resim</TableHead>
-            <TableHead>Malzeme Tipi</TableHead>
-            <TableHead>Parça Numarası</TableHead>
-            <TableHead>Yer</TableHead>
-            <TableHead>Ücret</TableHead>
-            <TableHead>Adet</TableHead>
-            <TableHead>Kanal</TableHead>
-            <TableHead>Kılıf Tipi</TableHead>
-            <TableHead>Voltaj</TableHead>
-            <TableHead>Akım</TableHead>
-            <TableHead>Değer</TableHead>
-            <TableHead>Birim</TableHead>
-            <TableHead>Güç</TableHead>
-            <TableHead>Tanım</TableHead>
-            <TableHead>Güncelle</TableHead>
-            <TableHead>Sil</TableHead>
+            {/* why doesn't this inherit text-center from the table idk */}
+            <TableHead className="text-center">Resim</TableHead>
+            <TableHead className="text-center">Malzeme Tipi</TableHead>
+            <TableHead className="text-center">Parça Numarası</TableHead>
+            <TableHead className="text-center">Yer</TableHead>
+            <TableHead className="text-center">Ücret</TableHead>
+            <TableHead className="text-center">Adet</TableHead>
+            <TableHead className="text-center">Kanal</TableHead>
+            <TableHead className="text-center">Kılıf Tipi</TableHead>
+            <TableHead className="text-center">Voltaj</TableHead>
+            <TableHead className="text-center">Akım</TableHead>
+            <TableHead className="text-center">Değer</TableHead>
+            <TableHead className="text-center">Birim</TableHead>
+            <TableHead className="text-center">Güç</TableHead>
+            <TableHead className="text-center">Tanım</TableHead>
+            <TableHead className="text-center">Güncelle</TableHead>
+            <TableHead className="text-center">Sil</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
