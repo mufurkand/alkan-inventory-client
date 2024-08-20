@@ -1,15 +1,17 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import FilterBox from "./SearchField/FilterBox";
 import { useAtom, useAtomValue } from "jotai";
 import filterSchema from "@/lib/schemas/filter";
 import { filterAtom } from "@/atoms/search";
 import SearchBar from "./SearchField/SearchBar";
 import ButtonSet from "./SearchField/ButtonSet";
+import { LoaderCircle } from "lucide-react";
 
 export default function SearchField() {
   const [filter, setFilter] = useAtom(filterAtom);
+  const [isPending, setIsPending] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
@@ -38,10 +40,20 @@ export default function SearchField() {
         ...filter,
         filters: result.data,
       });
+      setIsPending(false);
     }
 
     fetchData();
   }, [filter.search, filter.renderController]);
+
+  if (isPending) {
+    return (
+      <div className="h-64 flex justify-center items-center gap-5">
+        <LoaderCircle className="animate-spin" size={32} />
+        <p>Filtreler yükleniyor...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="pt-5 pb-5 grid gap-5">

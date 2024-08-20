@@ -35,7 +35,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-
+import { LoaderCircle } from "lucide-react";
 import { SquarePen, Trash2 } from "lucide-react";
 
 import { useEffect, useMemo, useState } from "react";
@@ -189,7 +189,7 @@ function Row({ part }: { part: z.infer<typeof partSchema> }) {
 
 export default function PartTable() {
   const [data, setData] = useState<z.infer<typeof partSchema>[]>([]);
-  const [pending, setPending] = useState(true);
+  const [isPending, setIsPending] = useState(true);
   const [pagination, setPagination] = useState({ limit: 10, offset: 0 });
   const [pageInfo, setPageInfo] = useState<{
     nextPage: number | boolean;
@@ -258,7 +258,7 @@ export default function PartTable() {
         prevPage: result.data.prevPage,
       });
       setData(result.data.data);
-      setPending(false);
+      setIsPending(false);
     }
 
     fetchData();
@@ -284,8 +284,13 @@ export default function PartTable() {
     }
   }
 
-  if (pending) {
-    return <div>Loading...</div>;
+  if (isPending) {
+    return (
+      <div className="h-64 flex justify-center items-center gap-5">
+        <LoaderCircle className="animate-spin" size={32} />
+        <p>Envanter yükleniyor...</p>
+      </div>
+    );
   }
 
   return (
