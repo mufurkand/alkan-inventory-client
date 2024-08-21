@@ -41,13 +41,14 @@ import { ImageOff } from "lucide-react";
 
 import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
-import responseSchema from "@/lib/schemas/response";
+import { tableResponseSchema } from "@/lib/schemas/responses";
 import partSchema from "@/lib/schemas/part";
 import { useAtomValue, useAtom } from "jotai";
 import { filterAtom } from "@/atoms/search";
 import PartForm from "./PartForm";
 import Image from "next/image";
 import Link from "next/link";
+import { Button } from "./ui/button";
 
 function Row({ part }: { part: z.infer<typeof partSchema> }) {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
@@ -181,9 +182,9 @@ function Row({ part }: { part: z.infer<typeof partSchema> }) {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>İptal</AlertDialogCancel>
-              <AlertDialogAction onClick={handleDelete}>
+              <Button variant="destructive" onClick={handleDelete}>
                 Devam
-              </AlertDialogAction>
+              </Button>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
@@ -251,7 +252,7 @@ export default function PartTable() {
         },
       });
       const data = await response.json();
-      const result = responseSchema.safeParse(data);
+      const result = tableResponseSchema.safeParse(data);
 
       if (!result.success) {
         console.error(result.error);
@@ -338,7 +339,6 @@ export default function PartTable() {
                   : undefined
               }
               tabIndex={isPrevButtonDisabled ? -1 : undefined}
-              href="#"
               onClick={() => handlePagination("backward")}
             />
           </PaginationItem>
@@ -355,7 +355,6 @@ export default function PartTable() {
                   : undefined
               }
               tabIndex={isNextButtonDisabled ? -1 : undefined}
-              href="#"
               onClick={() => handlePagination("forward")}
             />
           </PaginationItem>

@@ -16,6 +16,9 @@ import { useForm } from "react-hook-form";
 import ACCEPTED_FILE_TYPES from "@/lib/constants/acceptedFileTypes";
 import { useAtom } from "jotai";
 import { filterAtom } from "@/atoms/search";
+import { useState } from "react";
+import { uniqueConstraintErrorSchema } from "@/lib/schemas/responses";
+import { Loader2 } from "lucide-react";
 
 const formSchema = z.object({
   materialType: z.string(),
@@ -98,9 +101,11 @@ export default function PartForm({
     },
   });
   const [filter, setFilter] = useAtom(filterAtom);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsOpen(false);
+    if (isSubmitting) return;
+    setIsSubmitting(true);
 
     const formData = new FormData();
     const formDataEntries = {
@@ -148,8 +153,23 @@ export default function PartForm({
       data = await response.json();
     }
 
-    console.log(data);
+    const result = uniqueConstraintErrorSchema.safeParse(data);
 
+    // unique constraint error
+    if (result.success === true) {
+      setIsSubmitting(false);
+      form.setError("partNumber", {
+        type: "manual",
+        message: "Bu parça numarası zaten mevcut.",
+      });
+      form.setFocus("partNumber");
+      return;
+    }
+
+    console.log(form.formState.errors);
+    // no unique constraint error
+    setIsSubmitting(false);
+    setIsOpen(false);
     setFilter({
       ...filter,
       renderController: filter.renderController + 1,
@@ -344,9 +364,21 @@ export default function PartForm({
             </FormItem>
           )}
         />
-        <Button type="submit">
-          {mode === "PATCH" ? "Güncelle" : "Oluştur"}
-        </Button>
+        {Object.keys(form.formState.errors).length !== 0 ? (
+          <p className="text-red-500 text-sm">
+            Formda hata var. Lütfen ilgili alanları kontrol edin.
+          </p>
+        ) : null}
+        {isSubmitting ? (
+          <Button disabled>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Lütfen bekleyin
+          </Button>
+        ) : (
+          <Button type="submit">
+            {mode === "PATCH" ? "Güncelle" : "Oluştur"}
+          </Button>
+        )}
       </form>
     </Form>
   );
