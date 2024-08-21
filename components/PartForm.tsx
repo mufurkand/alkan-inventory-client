@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -19,12 +20,14 @@ import { filterAtom } from "@/atoms/search";
 import { useState } from "react";
 import { uniqueConstraintErrorSchema } from "@/lib/schemas/responses";
 import { Loader2 } from "lucide-react";
+import { Checkbox } from "./ui/checkbox";
 
 const formSchema = z.object({
   materialType: z.string(),
   partNumber: z.string(),
   location: z.string(),
   price: z.union([z.string(), z.number()]).transform((val, ctx) => {
+    if (typeof val === "string" && val === "") return "";
     const parsed = typeof val === "string" ? parseFloat(val) : val;
     if (isNaN(parsed)) {
       ctx.addIssue({
@@ -37,6 +40,14 @@ const formSchema = z.object({
     return parsed;
   }),
   quantity: z.union([z.string(), z.number()]).transform((val, ctx) => {
+    if (typeof val === "string" && val === "") {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Bir sayı girin.",
+      });
+      return z.NEVER;
+    }
+
     const parsed = typeof val === "string" ? parseInt(val) : val;
     if (isNaN(parsed)) {
       ctx.addIssue({
@@ -69,6 +80,7 @@ const formSchema = z.object({
         message: "Dosya formatı PNG, JPEG veya JPG olmalı.",
       });
   }),
+  updateImage: z.boolean(),
 });
 
 export default function PartForm({
@@ -88,8 +100,9 @@ export default function PartForm({
       materialType: mode === "PATCH" ? part?.materialType : "",
       partNumber: mode === "PATCH" ? part?.partNumber : "",
       location: mode === "PATCH" ? part?.location : "",
-      price: mode === "PATCH" ? part?.price ?? 0 : 0,
-      quantity: mode === "PATCH" ? part?.quantity ?? 0 : 0,
+      price: mode === "PATCH" && part?.price !== null ? part?.price : "",
+      quantity:
+        mode === "PATCH" && part?.quantity !== null ? part?.quantity : "",
       channel: mode === "PATCH" ? part?.channel ?? "" : "",
       caseType: mode === "PATCH" ? part?.caseType ?? "" : "",
       voltage: mode === "PATCH" ? part?.voltage ?? "" : "",
@@ -98,6 +111,7 @@ export default function PartForm({
       unit: mode === "PATCH" ? part?.unit ?? "" : "",
       power: mode === "PATCH" ? part?.power ?? "" : "",
       description: mode === "PATCH" ? part?.description ?? "" : "",
+      updateImage: false,
     },
   });
   const [filter, setFilter] = useAtom(filterAtom);
@@ -123,11 +137,13 @@ export default function PartForm({
       power: values.power,
       description: values.description,
       image: values.image[0],
+      updateImageJson: JSON.stringify({ updateImage: values.updateImage }),
     };
 
     Object.entries(formDataEntries).forEach(([key, value]) => {
       if (key !== "image" && value === "") return;
       if (key === "image" && value === undefined) return;
+      if (key === "updateImageJson" && mode === "POST") return;
       formData.append(key, value);
     });
 
@@ -166,7 +182,6 @@ export default function PartForm({
       return;
     }
 
-    console.log(form.formState.errors);
     // no unique constraint error
     setIsSubmitting(false);
     setIsOpen(false);
@@ -360,6 +375,24 @@ export default function PartForm({
               <FormControl>
                 <Input type="file" {...form.register("image")} />
               </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="updateImage"
+          render={({ field }) => (
+            <FormItem>
+              <div className="flex gap-2 items-center">
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <FormDescription>Resmi güncelle</FormDescription>
+              </div>
               <FormMessage />
             </FormItem>
           )}

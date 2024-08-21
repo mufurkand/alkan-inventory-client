@@ -50,6 +50,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./ui/button";
 
+// TODO: fetch only this row instead of the whole table when a part is updated
 function Row({ part }: { part: z.infer<typeof partSchema> }) {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false);
@@ -133,16 +134,16 @@ function Row({ part }: { part: z.infer<typeof partSchema> }) {
       <TableCell>{part.materialType}</TableCell>
       <TableCell>{part.partNumber}</TableCell>
       <TableCell>{part.location}</TableCell>
-      <TableCell>{part.price || "-"}</TableCell>
-      <TableCell>{part.quantity || "-"}</TableCell>
-      <TableCell>{part.channel || "-"}</TableCell>
-      <TableCell>{part.caseType || "-"}</TableCell>
-      <TableCell>{part.voltage || "-"}</TableCell>
-      <TableCell>{part.current || "-"}</TableCell>
-      <TableCell>{part.value || "-"}</TableCell>
-      <TableCell>{part.unit || "-"}</TableCell>
-      <TableCell>{part.power || "-"}</TableCell>
-      <TableCell>{part.description || "-"}</TableCell>
+      <TableCell>{part.price ?? "-"}</TableCell>
+      <TableCell>{part.quantity ?? "-"}</TableCell>
+      <TableCell>{part.channel ?? "-"}</TableCell>
+      <TableCell>{part.caseType ?? "-"}</TableCell>
+      <TableCell>{part.voltage ?? "-"}</TableCell>
+      <TableCell>{part.current ?? "-"}</TableCell>
+      <TableCell>{part.value ?? "-"}</TableCell>
+      <TableCell>{part.unit ?? "-"}</TableCell>
+      <TableCell>{part.power ?? "-"}</TableCell>
+      <TableCell>{part.description ?? "-"}</TableCell>
       <TableCell>
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
           <SheetTrigger>
