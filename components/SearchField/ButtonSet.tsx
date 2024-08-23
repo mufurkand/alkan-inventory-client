@@ -22,6 +22,23 @@ export default function ButtonSet() {
   const [isCreatePartDialogOpen, setIsCreatePartDialogOpen] = useState(false);
   const { setTheme } = useTheme();
 
+  async function handleDownload() {
+    try {
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_API_URL + "/api/parts/download"
+      );
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "parts.xlsx";
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error downloading file:", error);
+    }
+  }
+
   return (
     // theme switcher button
     <div className="flex gap-5 justify-between md:mr-0 mr-5">
@@ -45,7 +62,7 @@ export default function ButtonSet() {
         </DropdownMenuContent>
       </DropdownMenu>
       {/* export button */}
-      <Button>
+      <Button onClick={handleDownload}>
         <CloudDownload />
       </Button>
       {/* import button */}

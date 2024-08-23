@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import FilterBox from "./SearchField/FilterBox";
 import { useAtom } from "jotai";
 import filterSchema from "@/lib/schemas/filter";
@@ -13,6 +13,15 @@ import Banner from "./Banner";
 export default function SearchField() {
   const [filter, setFilter] = useAtom(filterAtom);
   const [isPending, setIsPending] = useState(true);
+
+  const isFiltersEmpty = useMemo(() => {
+    let temp = true;
+    Object.entries(filter.filters).forEach((filter) => {
+      console.log(filter);
+      if (filter[1].length !== 0) temp = false;
+    });
+    return temp;
+  }, [filter.filters]);
 
   useEffect(() => {
     async function fetchData() {
@@ -41,7 +50,6 @@ export default function SearchField() {
         ...filter,
         filters: result.data,
       });
-      console.log(Object.keys(filter.filters).length);
       setIsPending(false);
     }
 
@@ -54,24 +62,29 @@ export default function SearchField() {
 
   return (
     <div className="pt-5 pb-5 grid gap-5">
-      <div className="flex overflow-x-auto">
-        {/* 
+      {isFiltersEmpty ? (
+        <Banner message="Uygulanabilir bir filtre bulunamadı." />
+      ) : (
+        <div className="flex overflow-x-auto">
+          {/* 
           This spaghetti margin values instead of a proper gap and padding allows us to intersect
           FilterBoxes with the screen edge when overflow happens, and act like natural padding when
           it doesn't.
         */}
-        <div className="flex ml-5">
-          {Object.entries(filter.filters).map(([key, value]) => {
-            if (
-              !(value.length === 1 && value[0] === null) &&
-              value.length !== 0
-            )
-              return (
-                <FilterBox key={key} filter={{ name: key, values: value }} />
-              );
-          })}
+
+          <div className="flex ml-5">
+            {Object.entries(filter.filters).map(([key, value]) => {
+              if (
+                !(value.length === 1 && value[0] === null) &&
+                value.length !== 0
+              )
+                return (
+                  <FilterBox key={key} filter={{ name: key, values: value }} />
+                );
+            })}
+          </div>
         </div>
-      </div>
+      )}
       <div className="flex md:flex-row flex-col gap-5 pl-5">
         <ButtonSet />
         <SearchBar />
