@@ -1,4 +1,4 @@
-import { Moon, SquarePlus, Sun } from "lucide-react";
+import { Moon, SquarePlus, Sun, CloudDownload } from "lucide-react";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -16,16 +16,15 @@ import {
 import { useState } from "react";
 import PartForm from "../PartForm";
 import { useTheme } from "next-themes";
+import ImportButton from "./ButtonSet/ImportButton";
 
 export default function ButtonSet() {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isCreatePartDialogOpen, setIsCreatePartDialogOpen] = useState(false);
   const { setTheme } = useTheme();
 
-  async function handleAddPart() {}
-
   return (
-    // Theme Switcher Button
-    <div className="flex gap-5">
+    // theme switcher button
+    <div className="flex gap-5 justify-between md:mr-0 mr-5">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button>
@@ -45,9 +44,18 @@ export default function ButtonSet() {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      {/* Part Record Create Button */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <Button onClick={() => setIsDialogOpen(true)}>
+      {/* export button */}
+      <Button>
+        <CloudDownload />
+      </Button>
+      {/* import button */}
+      <ImportButton />
+      {/* part record create button */}
+      <Dialog
+        open={isCreatePartDialogOpen}
+        onOpenChange={setIsCreatePartDialogOpen}
+      >
+        <Button onClick={() => setIsCreatePartDialogOpen(true)}>
           <SquarePlus />
         </Button>
         <DialogContent className="overflow-y-auto h-3/4">
@@ -57,7 +65,7 @@ export default function ButtonSet() {
               Buradan yeni bir parça kaydı oluşturabilirsiniz.
             </DialogDescription>
           </DialogHeader>
-          <PartForm mode="POST" setIsOpen={setIsDialogOpen} />
+          <PartForm mode="POST" setIsOpen={setIsCreatePartDialogOpen} />
         </DialogContent>
       </Dialog>
     </div>

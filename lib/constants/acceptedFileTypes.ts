@@ -1,3 +1,4 @@
-const ALLOWED_FILE_TYPES: string[] = ["png", "jpg", "jpeg"];
+const ALLOWED_IMAGE_FILE_TYPES: string[] = ["png", "jpg", "jpeg"];
+const ALLOWED_EXCEL_FILE_TYPES: string[] = ["xlsx", "xls"];
 
-export default ALLOWED_FILE_TYPES;
+export { ALLOWED_IMAGE_FILE_TYPES, ALLOWED_EXCEL_FILE_TYPES };

@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from "react";
 import FilterBox from "./SearchField/FilterBox";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom } from "jotai";
 import filterSchema from "@/lib/schemas/filter";
 import { filterAtom } from "@/atoms/search";
 import SearchBar from "./SearchField/SearchBar";
 import ButtonSet from "./SearchField/ButtonSet";
-import { LoaderCircle } from "lucide-react";
+import LoadingBanner from "./LoadingBanner";
+import Banner from "./Banner";
 
 export default function SearchField() {
   const [filter, setFilter] = useAtom(filterAtom);
@@ -40,6 +41,7 @@ export default function SearchField() {
         ...filter,
         filters: result.data,
       });
+      console.log(Object.keys(filter.filters).length);
       setIsPending(false);
     }
 
@@ -47,18 +49,13 @@ export default function SearchField() {
   }, [filter.search, filter.renderController]);
 
   if (isPending) {
-    return (
-      <div className="h-64 flex justify-center items-center gap-5">
-        <LoaderCircle className="animate-spin" size={32} />
-        <p>Filtreler yükleniyor...</p>
-      </div>
-    );
+    return <LoadingBanner message="Filtreler yükleniyor..." />;
   }
 
   return (
     <div className="pt-5 pb-5 grid gap-5">
       <div className="flex overflow-x-auto">
-        {/*
+        {/* 
           This spaghetti margin values instead of a proper gap and padding allows us to intersect
           FilterBoxes with the screen edge when overflow happens, and act like natural padding when
           it doesn't.

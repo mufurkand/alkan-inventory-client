@@ -49,6 +49,8 @@ import PartForm from "./PartForm";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./ui/button";
+import LoadingBanner from "./LoadingBanner";
+import Banner from "./Banner";
 
 // TODO: fetch only this row instead of the whole table when a part is updated
 function Row({ part }: { part: z.infer<typeof partSchema> }) {
@@ -292,12 +294,11 @@ export default function PartTable() {
   }
 
   if (isPending) {
-    return (
-      <div className="h-64 flex justify-center items-center gap-5">
-        <LoaderCircle className="animate-spin" size={32} />
-        <p>Envanter yükleniyor...</p>
-      </div>
-    );
+    return <LoadingBanner message="Parçalar yükleniyor..." />;
+  }
+
+  if (data.length === 0) {
+    return <Banner message="Hiçbir parça bulunamadı." />;
   }
 
   return (

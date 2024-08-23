@@ -14,7 +14,7 @@ import partSchema from "@/lib/schemas/part";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import ACCEPTED_FILE_TYPES from "@/lib/constants/acceptedFileTypes";
+import { ALLOWED_IMAGE_FILE_TYPES } from "@/lib/constants/acceptedFileTypes";
 import { useAtom } from "jotai";
 import { filterAtom } from "@/atoms/search";
 import { useState } from "react";
@@ -26,39 +26,8 @@ const formSchema = z.object({
   materialType: z.string(),
   partNumber: z.string(),
   location: z.string(),
-  price: z.union([z.string(), z.number()]).transform((val, ctx) => {
-    if (typeof val === "string" && val === "") return "";
-    const parsed = typeof val === "string" ? parseFloat(val) : val;
-    if (isNaN(parsed)) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Bir sayı girin.",
-      });
-
-      return z.NEVER;
-    }
-    return parsed;
-  }),
-  quantity: z.union([z.string(), z.number()]).transform((val, ctx) => {
-    if (typeof val === "string" && val === "") {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Bir sayı girin.",
-      });
-      return z.NEVER;
-    }
-
-    const parsed = typeof val === "string" ? parseInt(val) : val;
-    if (isNaN(parsed)) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Bir sayı girin.",
-      });
-
-      return z.NEVER;
-    }
-    return parsed;
-  }),
+  price: z.string(),
+  quantity: z.string(),
   channel: z.string(),
   caseType: z.string(),
   voltage: z.string(),
@@ -74,7 +43,7 @@ const formSchema = z.object({
     if (files.length === 0) return;
 
     const fileExtension = files[0].name.split(".").pop();
-    if (fileExtension && !ACCEPTED_FILE_TYPES.includes(fileExtension))
+    if (fileExtension && !ALLOWED_IMAGE_FILE_TYPES.includes(fileExtension))
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: "Dosya formatı PNG, JPEG veya JPG olmalı.",
@@ -98,11 +67,10 @@ export default function PartForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       materialType: mode === "PATCH" ? part?.materialType : "",
-      partNumber: mode === "PATCH" ? part?.partNumber : "",
-      location: mode === "PATCH" ? part?.location : "",
-      price: mode === "PATCH" && part?.price !== null ? part?.price : "",
-      quantity:
-        mode === "PATCH" && part?.quantity !== null ? part?.quantity : "",
+      partNumber: mode === "PATCH" ? part?.partNumber ?? "" : "",
+      location: mode === "PATCH" ? part?.location ?? "" : "",
+      price: mode === "PATCH" ? part?.price ?? "" : "",
+      quantity: mode === "PATCH" ? part?.quantity ?? "" : "",
       channel: mode === "PATCH" ? part?.channel ?? "" : "",
       caseType: mode === "PATCH" ? part?.caseType ?? "" : "",
       voltage: mode === "PATCH" ? part?.voltage ?? "" : "",
@@ -379,24 +347,26 @@ export default function PartForm({
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="updateImage"
-          render={({ field }) => (
-            <FormItem>
-              <div className="flex gap-2 items-center">
-                <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-                <FormDescription>Resmi güncelle</FormDescription>
-              </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {mode === "PATCH" && (
+          <FormField
+            control={form.control}
+            name="updateImage"
+            render={({ field }) => (
+              <FormItem>
+                <div className="flex gap-2 items-center">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormDescription>Resmi güncelle</FormDescription>
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
         {Object.keys(form.formState.errors).length !== 0 ? (
           <p className="text-red-500 text-sm">
             Formda hata var. Lütfen ilgili alanları kontrol edin.

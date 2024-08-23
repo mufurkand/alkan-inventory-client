@@ -4,6 +4,8 @@ import type { Filter } from "@/lib/types/Filter";
 import { useAtom } from "jotai";
 import { filterAtom } from "@/atoms/search";
 import { useMemo } from "react";
+import { ListRestart } from "lucide-react";
+import { Button } from "../ui/button";
 
 function FilterItem({ name, value }: { name: string; value: string }) {
   const [filter, setFilter] = useAtom(filterAtom);
@@ -62,11 +64,28 @@ function FilterItem({ name, value }: { name: string; value: string }) {
 }
 
 export default function FilterBox({ filter }: { filter: Filter }) {
+  const [filterAtomValue, setFilterAtomValue] = useAtom(filterAtom);
+
+  function resetSelectedFilters() {
+    const updatedFilters = { ...filterAtomValue.selectedFilters };
+    delete updatedFilters[filter.name];
+    setFilterAtomValue({
+      ...filterAtomValue,
+      selectedFilters: updatedFilters,
+    });
+  }
+
   return (
     // take a look at the SearchField component for mr-5 explanation
     <Card className="flex-none w-64 mr-5">
-      <CardHeader className="text-center p-3">
+      <CardHeader className="p-3 relative">
         <CardTitle>{filterCategories[filter.name]}</CardTitle>
+        <Button
+          onClick={resetSelectedFilters}
+          className="absolute right-5 top-0 p-1.5 h-auto rounded-md"
+        >
+          <ListRestart />
+        </Button>
       </CardHeader>
       <CardContent className="text-center p-0 overflow-y-auto h-48 flex flex-col gap-1">
         {filter.values.map((value, index) => {
