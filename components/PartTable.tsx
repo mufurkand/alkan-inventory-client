@@ -111,7 +111,7 @@ function Row({ part }: { part: z.infer<typeof partSchema> }) {
   return (
     <TableRow key={part.id}>
       <TableCell className="flex justify-center items-center">
-        {isBrokenImage ? (
+        {isBrokenImage || part.imagePath === null ? (
           <div className="h-16 w-16 flex justify-center items-center">
             <ImageOff />
           </div>
@@ -135,7 +135,7 @@ function Row({ part }: { part: z.infer<typeof partSchema> }) {
       </TableCell>
       <TableCell>{part.materialType}</TableCell>
       <TableCell>{part.partNumber}</TableCell>
-      <TableCell>{part.location}</TableCell>
+      <TableCell>{part.location ?? "-"}</TableCell>
       <TableCell>{part.price ?? "-"}</TableCell>
       <TableCell>{part.quantity ?? "-"}</TableCell>
       <TableCell>{part.channel ?? "-"}</TableCell>

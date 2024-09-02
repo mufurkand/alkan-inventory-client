@@ -54,7 +54,7 @@ function FilterItem({ name, value }: { name: string; value: string }) {
   return (
     <button
       className={`w-full p-2 text-sm text-center ${
-        isSelected ? "bg-blue-500 text-white" : "bg-gray-100 dark:bg-gray-800"
+        isSelected ? "bg-red-500 text-white" : "bg-zinc-200 dark:bg-zinc-800"
       }`}
       onClick={handleClick}
     >
@@ -78,7 +78,7 @@ export default function FilterBox({ filter }: { filter: Filter }) {
   return (
     // take a look at the SearchField component for mr-5 explanation
     <Card className="flex-none w-64 mr-5">
-      <CardHeader className="p-3 relative">
+      <CardHeader className="p-3 relative dark:bg-red-900 bg-red-400 rounded-t-md">
         <CardTitle>{filterCategories[filter.name]}</CardTitle>
         <Button
           onClick={resetSelectedFilters}
