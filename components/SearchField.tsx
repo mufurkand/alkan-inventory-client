@@ -14,10 +14,10 @@ export default function SearchField() {
   const [filter, setFilter] = useAtom(filterAtom);
   const [isPending, setIsPending] = useState(true);
 
+  // TODO: reconsider the logic here
   const isFiltersEmpty = useMemo(() => {
     let temp = true;
     Object.entries(filter.filters).forEach((filter) => {
-      console.log(filter);
       if (filter[1].length !== 0) temp = false;
     });
     return temp;

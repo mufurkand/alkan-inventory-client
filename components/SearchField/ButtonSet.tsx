@@ -1,3 +1,5 @@
+"use client";
+
 import { Moon, SquarePlus, Sun, CloudDownload } from "lucide-react";
 import { Button } from "../ui/button";
 import {

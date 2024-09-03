@@ -1,3 +1,5 @@
+"use client";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import filterCategories from "@/lib/constants/filterCategories";
 import type { Filter } from "@/lib/types/Filter";
