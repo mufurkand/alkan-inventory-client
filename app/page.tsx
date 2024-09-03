@@ -1,13 +1,9 @@
-import PartTable from "@/components/PartTable";
-import SearchField from "@/components/SearchField";
-import { Separator } from "@/components/ui/separator";
+import Image from "next/image";
 
 export default function Home() {
   return (
-    <div>
-      <SearchField />
-      <Separator />
-      <PartTable />
+    <div className="flex items-center">
+      <img alt="Alkan Teknoloji logosu" src="logo.png" />
     </div>
   );
 }

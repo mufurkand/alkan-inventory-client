@@ -89,7 +89,7 @@ export default function Row({ part }: { part: z.infer<typeof partSchema> }) {
   }
 
   return (
-    <TableRow key={part.id}>
+    <TableRow className="odd:bg-zinc-800" key={part.id}>
       <TableCell className="flex justify-center items-center">
         {isBrokenImage || part.imagePath === null ? (
           <div className="h-16 w-16 flex justify-center items-center">
@@ -101,10 +101,7 @@ export default function Row({ part }: { part: z.infer<typeof partSchema> }) {
             href={process.env.NEXT_PUBLIC_API_URL + "/" + part.imagePath}
           >
             <div className="h-16 w-16 flex justify-center items-center">
-              <Image
-                unoptimized
-                height={64}
-                width={64}
+              <img
                 onError={handleBrokenImage}
                 alt={"Part with number " + part.partNumber}
                 src={process.env.NEXT_PUBLIC_API_URL + "/" + part.imagePath}
@@ -114,7 +111,9 @@ export default function Row({ part }: { part: z.infer<typeof partSchema> }) {
         )}
       </TableCell>
       <TableCell>{part.materialType}</TableCell>
-      <TableCell>{part.partNumber}</TableCell>
+      <TableCell>
+        <p className="line-clamp-1">{part.partNumber}</p>
+      </TableCell>
       <TableCell>{part.location ?? "-"}</TableCell>
       <TableCell>{part.price ?? "-"}</TableCell>
       <TableCell>{part.quantity ?? "-"}</TableCell>
@@ -125,7 +124,9 @@ export default function Row({ part }: { part: z.infer<typeof partSchema> }) {
       <TableCell>{part.value ?? "-"}</TableCell>
       <TableCell>{part.unit ?? "-"}</TableCell>
       <TableCell>{part.power ?? "-"}</TableCell>
-      <TableCell>{part.description ?? "-"}</TableCell>
+      <TableCell>
+        <p className="line-clamp-1">{part.description ?? "-"}</p>
+      </TableCell>
       <TableCell>
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
           <SheetTrigger>
