@@ -22,7 +22,6 @@ import {
 import { SquarePen, Trash2 } from "lucide-react";
 import { ImageOff } from "lucide-react";
 import PartForm from "../PartForm";
-import Image from "next/image";
 import Link from "next/link";
 import { Button } from "../ui/button";
 
@@ -89,7 +88,7 @@ export default function Row({ part }: { part: z.infer<typeof partSchema> }) {
   }
 
   return (
-    <TableRow className="odd:bg-zinc-800" key={part.id}>
+    <TableRow className="odd:bg-zinc-200 dark:odd:bg-zinc-800" key={part.id}>
       <TableCell className="flex justify-center items-center">
         {isBrokenImage || part.imagePath === null ? (
           <div className="h-16 w-16 flex justify-center items-center">
