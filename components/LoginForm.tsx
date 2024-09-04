@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -15,7 +14,12 @@ import Link from "next/link";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { set, z } from "zod";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
+import { loginResponseSchema } from "@/lib/schemas/responses";
+import { useSetAtom } from "jotai";
+import { authAtom } from "@/atoms/auth";
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -34,9 +38,37 @@ export default function LoginForm() {
       password: "",
     },
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const setAuth = useSetAtom(authAtom);
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsSubmitting(true);
+
+    const response = await fetch(
+      process.env.NEXT_PUBLIC_API_URL + "/api/auth/login",
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: JSON.stringify(values),
+      }
+    );
+    const data = await response.json();
+    const result = loginResponseSchema.safeParse(data);
+
+    if (!result.success) {
+      form.setError("root", {
+        message: "Kullanıcı adı veya şifre hatalı.",
+      });
+      setIsSubmitting(false);
+      console.log(form.formState.errors);
+      return;
+    }
+
+    setAuth(result.data.user);
+    localStorage.setItem("token", result.data.token);
+    setIsSubmitting(false);
   }
 
   return (
@@ -68,6 +100,11 @@ export default function LoginForm() {
             </FormItem>
           )}
         />
+        {form.formState.errors.root !== undefined ? (
+          <p className="text-red-500 text-sm">
+            {form.formState.errors.root.message}
+          </p>
+        ) : null}
         <p>
           Hesabınız yok mu?{" "}
           <Link className="underline" href="/parts">
@@ -75,7 +112,14 @@ export default function LoginForm() {
           </Link>{" "}
           deneyin.
         </p>
-        <Button type="submit">Giriş Yap</Button>
+        {isSubmitting ? (
+          <Button disabled>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Lütfen bekleyin
+          </Button>
+        ) : (
+          <Button type="submit">Giriş Yap</Button>
+        )}
       </form>
     </Form>
   );

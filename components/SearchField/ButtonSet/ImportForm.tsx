@@ -14,7 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { ALLOWED_EXCEL_FILE_TYPES } from "@/lib/constants/acceptedFileTypes";
-import { filterAtom } from "@/atoms/search";
+import { filterAtom } from "@/atoms/filter";
 import { useAtom } from "jotai";
 
 const formSchema = z.object({

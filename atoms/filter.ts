@@ -7,11 +7,10 @@ type FilterType = {
   renderController: number;
 };
 
-const initialFilterState = {};
-
+// TODO: split this into seperate atoms
 export const filterAtom = atom<FilterType>({
   search: "",
-  filters: initialFilterState,
-  selectedFilters: initialFilterState,
+  filters: {},
+  selectedFilters: {},
   renderController: 0,
 });

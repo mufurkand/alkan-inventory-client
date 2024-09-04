@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import filterCategories from "@/lib/constants/filterCategories";
 import type { Filter } from "@/lib/types/Filter";
 import { useAtom } from "jotai";
-import { filterAtom } from "@/atoms/search";
+import { filterAtom } from "@/atoms/filter";
 import { useMemo } from "react";
 import { ListRestart } from "lucide-react";
 import { Button } from "../ui/button";

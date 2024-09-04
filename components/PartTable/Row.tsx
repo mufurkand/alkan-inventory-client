@@ -25,11 +25,12 @@ import PartForm from "../PartForm";
 import Link from "next/link";
 import { Button } from "../ui/button";
 
-import { useAtom } from "jotai";
-import { filterAtom } from "@/atoms/search";
+import { useAtom, useAtomValue } from "jotai";
+import { filterAtom } from "@/atoms/filter";
 import { useState } from "react";
 import { z } from "zod";
 import partSchema from "@/lib/schemas/part";
+import { authAtom } from "@/atoms/auth";
 
 // TODO: fetch only this row instead of the whole table when a part is updated
 export default function Row({ part }: { part: z.infer<typeof partSchema> }) {
@@ -37,6 +38,7 @@ export default function Row({ part }: { part: z.infer<typeof partSchema> }) {
   const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false);
   const [isBrokenImage, setIsBrokenImage] = useState(false);
   const [filter, setFilter] = useAtom(filterAtom);
+  const auth = useAtomValue(authAtom);
 
   async function handleDelete() {
     if (!process.env.NEXT_PUBLIC_API_URL) {
@@ -126,52 +128,57 @@ export default function Row({ part }: { part: z.infer<typeof partSchema> }) {
       <TableCell>
         <p className="line-clamp-1">{part.description ?? "-"}</p>
       </TableCell>
-      <TableCell>
-        <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-          <SheetTrigger>
-            <SquarePen />
-          </SheetTrigger>
-          <SheetContent className="overflow-y-auto">
-            <SheetHeader className="mb-5">
-              <SheetTitle>Parça Kaydı Güncelle</SheetTitle>
-              <SheetDescription>
-                Parçanın herhangi bir bilgisini buradan güncelleyebilirsiniz.
-              </SheetDescription>
-            </SheetHeader>
-            <PartForm
-              part={part}
-              mode="PATCH"
-              setIsOpen={setIsSheetOpen}
-              setIsBrokenImage={setIsBrokenImage}
-            />
-          </SheetContent>
-        </Sheet>
-      </TableCell>
-      <TableCell>
-        <AlertDialog
-          open={isAlertDialogOpen}
-          onOpenChange={setIsAlertDialogOpen}
-        >
-          <AlertDialogTrigger>
-            <Trash2 />
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Emin misiniz?</AlertDialogTitle>
-              <AlertDialogDescription>
-                Bu işlem geri alınamaz. Parça kaydı sunucularımızdan kalıcı
-                olarak silinecektir.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>İptal</AlertDialogCancel>
-              <Button variant="destructive" onClick={handleDelete}>
-                Devam
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </TableCell>
+      {auth !== null && (
+        <>
+          <TableCell>
+            <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+              <SheetTrigger>
+                <SquarePen />
+              </SheetTrigger>
+              <SheetContent className="overflow-y-auto">
+                <SheetHeader className="mb-5">
+                  <SheetTitle>Parça Kaydı Güncelle</SheetTitle>
+                  <SheetDescription>
+                    Parçanın herhangi bir bilgisini buradan
+                    güncelleyebilirsiniz.
+                  </SheetDescription>
+                </SheetHeader>
+                <PartForm
+                  part={part}
+                  mode="PATCH"
+                  setIsOpen={setIsSheetOpen}
+                  setIsBrokenImage={setIsBrokenImage}
+                />
+              </SheetContent>
+            </Sheet>
+          </TableCell>
+          <TableCell>
+            <AlertDialog
+              open={isAlertDialogOpen}
+              onOpenChange={setIsAlertDialogOpen}
+            >
+              <AlertDialogTrigger>
+                <Trash2 />
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Emin misiniz?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Bu işlem geri alınamaz. Parça kaydı sunucularımızdan kalıcı
+                    olarak silinecektir.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>İptal</AlertDialogCancel>
+                  <Button variant="destructive" onClick={handleDelete}>
+                    Devam
+                  </Button>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </TableCell>
+        </>
+      )}
     </TableRow>
   );
 }

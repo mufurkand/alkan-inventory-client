@@ -1,6 +1,6 @@
 "use client";
 
-import { Moon, SquarePlus, Sun, CloudDownload } from "lucide-react";
+import { Moon, SquarePlus, Sun, CloudDownload, House } from "lucide-react";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -19,10 +19,15 @@ import { useState } from "react";
 import PartForm from "../PartForm";
 import { useTheme } from "next-themes";
 import ImportButton from "./ButtonSet/ImportButton";
+import { useAtomValue } from "jotai";
+import { authAtom } from "@/atoms/auth";
+import { useRouter } from "next/navigation";
 
 export default function ButtonSet() {
   const [isCreatePartDialogOpen, setIsCreatePartDialogOpen] = useState(false);
   const { setTheme } = useTheme();
+  const auth = useAtomValue(authAtom);
+  const router = useRouter();
 
   async function handleDownload() {
     try {
@@ -41,9 +46,13 @@ export default function ButtonSet() {
     }
   }
 
+  function handleHomeClick() {
+    router.push("/");
+  }
+
   return (
     // theme switcher button
-    <div className="flex gap-5 justify-between md:mr-0 mr-5">
+    <div className="flex gap-5 md:mr-0 mr-5 flex-wrap justify-between">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button>
@@ -63,30 +72,34 @@ export default function ButtonSet() {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      {/* export button */}
-      <Button onClick={handleDownload}>
-        <CloudDownload />
+      <Button onClick={handleHomeClick}>
+        <House />
       </Button>
-      {/* import button */}
-      <ImportButton />
-      {/* part record create button */}
-      <Dialog
-        open={isCreatePartDialogOpen}
-        onOpenChange={setIsCreatePartDialogOpen}
-      >
-        <Button onClick={() => setIsCreatePartDialogOpen(true)}>
-          <SquarePlus />
-        </Button>
-        <DialogContent className="overflow-y-auto h-3/4">
-          <DialogHeader>
-            <DialogTitle>Parça Kaydı Oluştur</DialogTitle>
-            <DialogDescription>
-              Buradan yeni bir parça kaydı oluşturabilirsiniz.
-            </DialogDescription>
-          </DialogHeader>
-          <PartForm mode="POST" setIsOpen={setIsCreatePartDialogOpen} />
-        </DialogContent>
-      </Dialog>
+      {auth !== null && (
+        <>
+          <Button onClick={handleDownload}>
+            <CloudDownload />
+          </Button>
+          <ImportButton />
+          <Dialog
+            open={isCreatePartDialogOpen}
+            onOpenChange={setIsCreatePartDialogOpen}
+          >
+            <Button onClick={() => setIsCreatePartDialogOpen(true)}>
+              <SquarePlus />
+            </Button>
+            <DialogContent className="overflow-y-auto h-3/4">
+              <DialogHeader>
+                <DialogTitle>Parça Kaydı Oluştur</DialogTitle>
+                <DialogDescription>
+                  Buradan yeni bir parça kaydı oluşturabilirsiniz.
+                </DialogDescription>
+              </DialogHeader>
+              <PartForm mode="POST" setIsOpen={setIsCreatePartDialogOpen} />
+            </DialogContent>
+          </Dialog>
+        </>
+      )}
     </div>
   );
 }

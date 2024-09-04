@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import FilterBox from "./SearchField/FilterBox";
 import { useAtom } from "jotai";
 import filterSchema from "@/lib/schemas/filter";
-import { filterAtom } from "@/atoms/search";
+import { filterAtom } from "@/atoms/filter";
 import SearchBar from "./SearchField/SearchBar";
 import ButtonSet from "./SearchField/ButtonSet";
 import LoadingBanner from "./LoadingBanner";

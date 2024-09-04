@@ -1,7 +1,7 @@
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Search } from "lucide-react";
-import { filterAtom } from "@/atoms/search";
+import { filterAtom } from "@/atoms/filter";
 import { useAtom } from "jotai";
 import { useRef } from "react";
 

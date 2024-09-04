@@ -16,4 +16,20 @@ const uniqueConstraintErrorSchema = z.object({
   target: z.string().array(),
 });
 
-export { tableResponseSchema, uniqueConstraintErrorSchema };
+const statusResponseSchema = z.object({
+  id: z.number(),
+  username: z.string(),
+  role: z.string(),
+});
+
+const loginResponseSchema = z.object({
+  token: z.string(),
+  user: statusResponseSchema,
+});
+
+export {
+  tableResponseSchema,
+  uniqueConstraintErrorSchema,
+  statusResponseSchema,
+  loginResponseSchema,
+};

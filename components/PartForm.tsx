@@ -18,7 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { ALLOWED_IMAGE_FILE_TYPES } from "@/lib/constants/acceptedFileTypes";
 import { useAtom } from "jotai";
-import { filterAtom } from "@/atoms/search";
+import { filterAtom } from "@/atoms/filter";
 import { useState } from "react";
 import { uniqueConstraintErrorSchema } from "@/lib/schemas/responses";
 import { Loader2 } from "lucide-react";

@@ -24,7 +24,8 @@ import { z } from "zod";
 import { tableResponseSchema } from "@/lib/schemas/responses";
 import partSchema from "@/lib/schemas/part";
 import { useAtomValue } from "jotai";
-import { filterAtom } from "@/atoms/search";
+import { filterAtom } from "@/atoms/filter";
+import { authAtom } from "@/atoms/auth";
 
 export default function PartTable() {
   const [data, setData] = useState<z.infer<typeof partSchema>[]>([]);
@@ -35,6 +36,7 @@ export default function PartTable() {
     prevPage: number | boolean;
   }>({ nextPage: false, prevPage: false });
   const filter = useAtomValue(filterAtom);
+  const auth = useAtomValue(authAtom);
 
   const page = useMemo(
     () => pagination.offset / pagination.limit + 1,
@@ -151,8 +153,12 @@ export default function PartTable() {
             <TableHead className="text-center">Birim</TableHead>
             <TableHead className="text-center">Güç</TableHead>
             <TableHead className="text-center">Tanım</TableHead>
-            <TableHead className="text-center">Güncelle</TableHead>
-            <TableHead className="text-center">Sil</TableHead>
+            {auth !== null && (
+              <>
+                <TableHead className="text-center">Güncelle</TableHead>
+                <TableHead className="text-center">Sil</TableHead>
+              </>
+            )}
           </TableRow>
         </TableHeader>
         <TableBody>
