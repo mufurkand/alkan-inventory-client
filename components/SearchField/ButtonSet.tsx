@@ -1,6 +1,13 @@
 "use client";
 
-import { Moon, SquarePlus, Sun, CloudDownload, House } from "lucide-react";
+import {
+  Moon,
+  SquarePlus,
+  Sun,
+  CloudDownload,
+  House,
+  LogOut,
+} from "lucide-react";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -19,14 +26,14 @@ import { useState } from "react";
 import PartForm from "../PartForm";
 import { useTheme } from "next-themes";
 import ImportButton from "./ButtonSet/ImportButton";
-import { useAtomValue } from "jotai";
+import { useAtom } from "jotai";
 import { authAtom } from "@/atoms/auth";
 import { useRouter } from "next/navigation";
 
 export default function ButtonSet() {
   const [isCreatePartDialogOpen, setIsCreatePartDialogOpen] = useState(false);
   const { setTheme } = useTheme();
-  const auth = useAtomValue(authAtom);
+  const [auth, setAuth] = useAtom(authAtom);
   const router = useRouter();
 
   async function handleDownload() {
@@ -50,9 +57,14 @@ export default function ButtonSet() {
     router.push("/");
   }
 
+  function handleLogOut() {
+    localStorage.removeItem("token");
+    setAuth(null);
+  }
+
   return (
     // theme switcher button
-    <div className="flex gap-5 md:mr-0 mr-5 flex-wrap justify-between">
+    <div className="flex gap-5 md:mr-0 mr-5 flex-wrap">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button>
@@ -77,6 +89,9 @@ export default function ButtonSet() {
       </Button>
       {auth !== null && (
         <>
+          <Button onClick={handleLogOut}>
+            <LogOut />
+          </Button>
           <Button onClick={handleDownload}>
             <CloudDownload />
           </Button>

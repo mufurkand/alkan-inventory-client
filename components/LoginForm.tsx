@@ -94,7 +94,7 @@ export default function LoginForm() {
             <FormItem>
               <FormLabel>Şifre</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input type="password" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
