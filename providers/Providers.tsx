@@ -21,30 +21,34 @@ function AuthProvider({
   const [isPending, setIsPending] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setIsPending(false);
-      return;
-    }
-
     // request to validate token
     async function validateToken() {
-      const response = await fetch(
-        process.env.NEXT_PUBLIC_API_URL + "/api/auth/status",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const data = await response.json();
-      const result = statusResponseSchema.safeParse(data);
+      const minimumDelay = 2000;
+      const delay = new Promise((resolve) => setTimeout(resolve, minimumDelay));
 
-      if (result.success) {
-        setAuth(result.data);
-      } else {
-        localStorage.removeItem("token");
+      async function tokenValidation() {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        const response = await fetch(
+          process.env.NEXT_PUBLIC_API_URL + "/api/auth/status",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const data = await response.json();
+        const result = statusResponseSchema.safeParse(data);
+
+        if (result.success) {
+          setAuth(result.data);
+        } else {
+          localStorage.removeItem("token");
+        }
       }
+
+      await Promise.all([delay, tokenValidation]);
 
       setIsPending(false);
     }
