@@ -21,7 +21,7 @@ import Row from "./PartTable/Row";
 
 import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
-import { tableResponseSchema } from "@/lib/schemas/responses";
+import { partsResponseSchema } from "@/lib/schemas/responses";
 import partSchema from "@/lib/schemas/part";
 import { useAtomValue } from "jotai";
 import { filterAtom } from "@/atoms/filter";
@@ -87,7 +87,7 @@ export default function PartTable() {
         },
       });
       const data = await response.json();
-      const result = tableResponseSchema.safeParse(data);
+      const result = partsResponseSchema.safeParse(data);
 
       if (!result.success) {
         console.error(result.error);
@@ -155,8 +155,9 @@ export default function PartTable() {
             <TableHead className="text-center">Tanım</TableHead>
             {auth !== null && (
               <>
-                <TableHead className="text-center">Güncelle</TableHead>
-                <TableHead className="text-center">Sil</TableHead>
+                <TableHead className="text-center" colSpan={2}>
+                  İşlemler
+                </TableHead>
               </>
             )}
           </TableRow>

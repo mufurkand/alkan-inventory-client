@@ -66,7 +66,7 @@ export default function LoginForm() {
       return;
     }
 
-    setAuth(result.data.user);
+    setAuth({ user: result.data.user, token: result.data.token });
     localStorage.setItem("token", result.data.token);
     setIsSubmitting(false);
   }

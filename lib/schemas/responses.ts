@@ -1,7 +1,8 @@
 import { z } from "zod";
 import partSchema from "./part";
+import userSchema from "./user";
 
-const tableResponseSchema = z.object({
+const partsResponseSchema = z.object({
   data: z.array(partSchema),
   nextPage: z.union([z.number(), z.boolean()]),
   prevPage: z.union([z.number(), z.boolean()]),
@@ -16,20 +17,19 @@ const uniqueConstraintErrorSchema = z.object({
   target: z.string().array(),
 });
 
-const statusResponseSchema = z.object({
-  id: z.number(),
-  username: z.string(),
-  role: z.string(),
-});
+const statusResponseSchema = userSchema;
 
 const loginResponseSchema = z.object({
   token: z.string(),
   user: statusResponseSchema,
 });
 
+const usersResponseSchema = z.array(statusResponseSchema);
+
 export {
-  tableResponseSchema,
+  partsResponseSchema,
   uniqueConstraintErrorSchema,
   statusResponseSchema,
   loginResponseSchema,
+  usersResponseSchema,
 };

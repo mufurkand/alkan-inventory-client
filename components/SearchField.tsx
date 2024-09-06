@@ -5,7 +5,7 @@ import FilterBox from "./SearchField/FilterBox";
 import { useAtom } from "jotai";
 import filterSchema from "@/lib/schemas/filter";
 import { filterAtom } from "@/atoms/filter";
-import SearchBar from "./SearchField/SearchBar";
+import SearchBar from "./SearchBar";
 import ButtonSet from "./SearchField/ButtonSet";
 import LoadingBanner from "./LoadingBanner";
 import Banner from "./Banner";
@@ -22,6 +22,13 @@ export default function SearchField() {
     });
     return temp;
   }, [filter.filters]);
+
+  function setSearch(search: string) {
+    setFilter({
+      ...filter,
+      search,
+    });
+  }
 
   useEffect(() => {
     async function fetchData() {
@@ -85,9 +92,12 @@ export default function SearchField() {
           </div>
         </div>
       )}
-      <div className="flex md:flex-row flex-col gap-5 pl-5">
+      <div className="flex md:flex-row flex-col gap-5 px-5">
         <ButtonSet />
-        <SearchBar />
+        <SearchBar
+          placeholder="Parça No ya da ürün tanımı ara"
+          setSearch={setSearch}
+        />
       </div>
     </div>
   );

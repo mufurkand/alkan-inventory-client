@@ -68,7 +68,6 @@ export default function ButtonSet() {
   }
 
   return (
-    // theme switcher button
     <div className="flex gap-5 md:mr-0 mr-5 flex-wrap">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
