@@ -15,7 +15,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { ALLOWED_EXCEL_FILE_TYPES } from "@/lib/constants/acceptedFileTypes";
 import { filterAtom } from "@/atoms/filter";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
+import { authAtom } from "@/atoms/auth";
 
 const formSchema = z.object({
   excel: (typeof window === "undefined"
@@ -44,6 +45,7 @@ export default function ImportForm({
     resolver: zodResolver(formSchema),
   });
   const [filter, setFilter] = useAtom(filterAtom);
+  const auth = useAtomValue(authAtom);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const formData = new FormData();
@@ -58,6 +60,9 @@ export default function ImportForm({
     const response = await fetch(
       process.env.NEXT_PUBLIC_API_URL + "/api/parts/upload",
       {
+        headers: {
+          Authorization: `Bearer ${auth?.token}`,
+        },
         method: "POST",
         body: formData,
       }

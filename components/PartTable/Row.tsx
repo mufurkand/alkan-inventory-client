@@ -51,6 +51,9 @@ export default function Row({ part }: { part: z.infer<typeof partSchema> }) {
     );
 
     const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${auth?.token}`,
+      },
       method: "DELETE",
     });
     const data = await response.json();

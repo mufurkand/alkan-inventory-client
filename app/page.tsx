@@ -1,20 +1,16 @@
 "use client";
 
-import { authAtom } from "@/atoms/auth";
 import LoginForm from "@/components/LoginForm";
+import HomePage from "@/components/HomePage";
+
+import { authAtom } from "@/atoms/auth";
 import { Separator } from "@/components/ui/separator";
 import { useAtomValue } from "jotai";
-import Link from "next/link";
 
 export default function Home() {
   const auth = useAtomValue(authAtom);
 
-  if (auth)
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <Link href="/parts">Table</Link>
-      </div>
-    );
+  if (auth) return <HomePage />;
 
   return (
     <div className="flex justify-center h-screen items-center">

@@ -42,7 +42,7 @@ function AuthProvider({
         const result = statusResponseSchema.safeParse(data);
 
         if (result.success) {
-          setAuth(result.data);
+          setAuth({ user: result.data, token });
         } else {
           localStorage.removeItem("token");
         }

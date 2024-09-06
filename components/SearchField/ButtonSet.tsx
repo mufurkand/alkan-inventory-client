@@ -39,7 +39,12 @@ export default function ButtonSet() {
   async function handleDownload() {
     try {
       const response = await fetch(
-        process.env.NEXT_PUBLIC_API_URL + "/api/parts/download"
+        process.env.NEXT_PUBLIC_API_URL + "/api/parts/download",
+        {
+          headers: {
+            Authorization: `Bearer ${auth?.token}`,
+          },
+        }
       );
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);

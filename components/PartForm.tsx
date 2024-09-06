@@ -17,12 +17,13 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { ALLOWED_IMAGE_FILE_TYPES } from "@/lib/constants/acceptedFileTypes";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { filterAtom } from "@/atoms/filter";
 import { useState } from "react";
 import { uniqueConstraintErrorSchema } from "@/lib/schemas/responses";
 import { Loader2 } from "lucide-react";
 import { Checkbox } from "./ui/checkbox";
+import { authAtom } from "@/atoms/auth";
 
 const formSchema = z.object({
   materialType: z.string(),
@@ -86,6 +87,7 @@ export default function PartForm({
   });
   const [filter, setFilter] = useAtom(filterAtom);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const auth = useAtomValue(authAtom);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (isSubmitting) return;
@@ -122,6 +124,9 @@ export default function PartForm({
 
     if (mode === "POST") {
       response = await fetch(process.env.NEXT_PUBLIC_API_URL + "/api/parts", {
+        headers: {
+          Authorization: `Bearer ${auth?.token}`,
+        },
         method: mode,
         body: formData,
       });
@@ -132,6 +137,9 @@ export default function PartForm({
       response = await fetch(
         process.env.NEXT_PUBLIC_API_URL + `/api/parts/${part.id}`,
         {
+          headers: {
+            Authorization: `Bearer ${auth?.token}`,
+          },
           method: mode,
           body: formData,
         }
