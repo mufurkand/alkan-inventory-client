@@ -11,6 +11,22 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Check, ChevronsUpDown } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,17 +38,19 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { authAtom } from "@/atoms/auth";
 import userSchema from "@/lib/schemas/user";
 import { userSearchAtom } from "@/atoms/userSearch";
-
-// TODO: combobox for role
+import USER_ROLES from "@/lib/constants/userRoles";
 
 const formSchema = z.object({
   username: z.string().min(2, {
     message: "Kullanıcı adı en az 2 karakter olmalıdır.",
   }),
-  role: z.string(),
-  password: z.string().min(8, {
-    message: "Şifre en az 8 karakter olmalıdır.",
-  }),
+  role: z.union([z.literal("USER"), z.literal("ADMIN"), z.literal("")]),
+  password: z.union([
+    z.string().min(8, {
+      message: "Şifre en az 8 karakter olmalıdır.",
+    }),
+    z.literal(""),
+  ]),
   updatePassword: z.boolean(),
 });
 
@@ -72,12 +90,25 @@ export default function UserForm({
       password: values.password,
     };
 
+    let terminate = false;
+
     Object.entries(formDataEntries).forEach(([key, value]) => {
-      if (value === "") return;
       if (key === "password" && !values.updatePassword && mode === "PATCH")
         return;
+      if (key === "role" && value === "" && mode === "POST") {
+        form.setError("role", {
+          message: "Rol seçmelisiniz.",
+        });
+        terminate = true;
+        return;
+      }
       formData.append(key, value);
     });
+
+    if (terminate) {
+      setIsSubmitting(false);
+      return;
+    }
 
     if (mode === "POST") {
       response = await fetch(process.env.NEXT_PUBLIC_API_URL + "/api/users", {
@@ -132,11 +163,56 @@ export default function UserForm({
           control={form.control}
           name="role"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Rolü</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
+            <FormItem className="flex flex-col">
+              <FormLabel>Kullanıcı Rolü</FormLabel>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      className={cn(
+                        "w-[200px] justify-between",
+                        !field.value && "text-muted-foreground"
+                      )}
+                    >
+                      {field.value
+                        ? USER_ROLES.find((role) => role.value === field.value)
+                            ?.label
+                        : "Rol seçin"}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="w-[200px] p-0">
+                  <Command>
+                    <CommandList>
+                      <CommandEmpty>Rol bulunamadı.</CommandEmpty>
+                      <CommandGroup>
+                        {USER_ROLES.map((role) => (
+                          <CommandItem
+                            value={role.label}
+                            key={role.value}
+                            onSelect={() => {
+                              form.setValue("role", role.value);
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                role.value === field.value
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              )}
+                            />
+                            {role.label}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
               <FormMessage />
             </FormItem>
           )}
