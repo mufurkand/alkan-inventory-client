@@ -68,7 +68,6 @@ export default function ImportForm({
       }
     );
     const data = await response.json();
-    console.log(data);
     setFilter({ ...filter, renderController: filter.renderController + 1 });
     setIsImportDialogOpen(false);
     setIsSubmitting(false);

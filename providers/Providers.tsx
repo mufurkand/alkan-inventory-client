@@ -30,8 +30,6 @@ function AuthProvider({
         const token = localStorage.getItem("token");
         if (!token) return;
 
-        console.log("got token");
-
         const response = await fetch(
           process.env.NEXT_PUBLIC_API_URL + "/api/auth/status",
           {
@@ -45,7 +43,6 @@ function AuthProvider({
 
         if (result.success) {
           setAuth({ user: result.data, token });
-          console.log("auth succeeded");
         } else {
           localStorage.removeItem("token");
         }

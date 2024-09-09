@@ -62,7 +62,6 @@ export default function LoginForm() {
         message: "Kullanıcı adı veya şifre hatalı.",
       });
       setIsSubmitting(false);
-      console.log(form.formState.errors);
       return;
     }
 
