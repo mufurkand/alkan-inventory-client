@@ -27,13 +27,19 @@ export default function UserTable() {
         return;
       }
 
-      // TODO: transition to search api
+      const formData = new FormData();
+      if (userSearch.search) {
+        formData.append("search", userSearch.search);
+      }
+
       const response = await fetch(
-        process.env.NEXT_PUBLIC_API_URL + "/api/users",
+        process.env.NEXT_PUBLIC_API_URL + "/api/users/search",
         {
+          method: "POST",
           headers: {
             Authorization: `Bearer ${auth?.token}`,
           },
+          body: formData,
         }
       );
       const data = await response.json();
