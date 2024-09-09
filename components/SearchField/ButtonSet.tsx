@@ -25,7 +25,6 @@ import {
 import { useState } from "react";
 import PartForm from "../PartForm";
 import { useTheme } from "next-themes";
-import ImportButton from "./ButtonSet/ImportButton";
 import { useAtom } from "jotai";
 import { authAtom } from "@/atoms/auth";
 import { useRouter } from "next/navigation";
@@ -36,35 +35,8 @@ export default function ButtonSet() {
   const [auth, setAuth] = useAtom(authAtom);
   const router = useRouter();
 
-  async function handleDownload() {
-    try {
-      const response = await fetch(
-        process.env.NEXT_PUBLIC_API_URL + "/api/parts/download",
-        {
-          headers: {
-            Authorization: `Bearer ${auth?.token}`,
-          },
-        }
-      );
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "parts.xlsx";
-      link.click();
-      URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Error downloading file:", error);
-    }
-  }
-
   function handleHomeClick() {
     router.push("/");
-  }
-
-  function handleLogOut() {
-    localStorage.removeItem("token");
-    setAuth(null);
   }
 
   return (
@@ -93,13 +65,6 @@ export default function ButtonSet() {
       </Button>
       {auth !== null && (
         <>
-          <Button onClick={handleLogOut}>
-            <LogOut />
-          </Button>
-          <Button onClick={handleDownload}>
-            <CloudDownload />
-          </Button>
-          <ImportButton />
           <Dialog
             open={isCreatePartDialogOpen}
             onOpenChange={setIsCreatePartDialogOpen}

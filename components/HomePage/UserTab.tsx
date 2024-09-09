@@ -68,10 +68,10 @@ export default function UserTab() {
 
   return (
     <div className="flex md:flex-row flex-col-reverse gap-5">
-      <div className="overflow-y-auto md:basis-5/6 md:h-96 h-64">
+      <div className="md:basis-4/5">
         <UserTable />
       </div>
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3 md:basis-1/5">
         <Dialog
           open={isCreatePartDialogOpen}
           onOpenChange={setIsCreatePartDialogOpen}

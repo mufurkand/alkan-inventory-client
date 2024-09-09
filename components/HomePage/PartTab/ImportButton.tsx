@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { FileUp } from "lucide-react";
 import {
   Dialog,
@@ -8,6 +8,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import ImportForm from "./ImportForm";
 import { useState } from "react";
@@ -19,10 +20,12 @@ export default function ImportButton() {
 
   return (
     <div>
-      <Button onClick={() => setIsImportDialogOpen(true)}>
-        <FileUp />
-      </Button>
       <Dialog open={isImportDialogOpen} onOpenChange={setIsImportDialogOpen}>
+        <DialogTrigger
+          className={buttonVariants({ variant: "default" }) + " w-full"}
+        >
+          <p>Excel Dosyası Yükle</p>
+        </DialogTrigger>
         <DialogContent className="sm:max-w-md">
           {isSubmitting ? (
             <LoadingBanner message="Dosya işleniyor..." />
