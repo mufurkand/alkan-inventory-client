@@ -1,3 +1,7 @@
+# Alkan Inventory
+
+![1c-theme](https://github.com/user-attachments/assets/f8c06ff1-d645-4bee-9671-c6d9392a4b13)
+
 ## Getting Started
 
 First, run the development server:
@@ -12,8 +16,4 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result. Needs the [API](https://github.com/mufurkand/alkan-inventory-api) to function.
